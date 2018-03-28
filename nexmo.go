@@ -3,10 +3,9 @@ package sms
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
+	"net/url"
 )
 
 // Nexmo represents a Nexmo request payload (https://developer.nexmo.com)
@@ -56,12 +55,13 @@ func (n Nexmo) getResponse() (NexmoResponse, error) {
 		client = &http.Client{}
 	)
 
-	// MarshalJSON will not throw any error
-	b, _ = json.Marshal(n)
+	b = []byte(n.getQuery())
 
 	if req, err = http.NewRequest(http.MethodPost, NexmoEndpoint, bytes.NewReader(b)); err != nil {
 		return nResp, err
 	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	if resp, err = client.Do(req); err != nil {
 		return nResp, err
@@ -87,30 +87,28 @@ func (n Nexmo) send(to string, message Message) (interface{}, error) {
 }
 
 // MarshalJSON generates the JSON payload of a Nexmo object
-func (n Nexmo) MarshalJSON() ([]byte, error) {
-	buf := bytes.NewBufferString("{")
-	contents := []string{}
+func (n Nexmo) getQuery() string {
+	u := url.Values{}
 
 	if "" != n.APIKey {
-		contents = append(contents, fmt.Sprintf(`"api_key":"%s"`, n.APIKey))
+		u.Set("api_key", n.APIKey)
 	}
 
 	if "" != n.APISecret {
-		contents = append(contents, fmt.Sprintf(`"api_secret":"%s"`, n.APISecret))
+		u.Set("api_secret", n.APISecret)
 	}
 
 	if "" != n.From {
-		contents = append(contents, fmt.Sprintf(`"from":"%s"`, n.From))
+		u.Set("from", n.From)
 	}
 
 	if "" != n.to {
-		contents = append(contents, fmt.Sprintf(`"to":"%s"`, n.to))
+		u.Set("to", n.to)
 	}
 
 	if "" != n.text {
-		contents = append(contents, fmt.Sprintf(`"text":"%s"`, n.text))
+		u.Set("text", n.text)
 	}
 
-	buf.WriteString(strings.Join(contents, ",") + "}")
-	return buf.Bytes(), nil
+	return u.Encode()
 }

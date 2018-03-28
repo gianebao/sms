@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gianebao/smsx/sms"
+	"github.com/gianebao/sms"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +43,7 @@ func TestNexmo_Send(t *testing.T) {
 	}
 
 	s := makeNexmoServer(fmt.Sprintf(
-		`{"api_key":"%s","api_secret":"%s","from":"%s","to":"99887711","text":"Hello world"}`,
+		`api_key=%s&api_secret=%s&from=%s&text=Hello+world&to=99887711`,
 		n.APIKey,
 		n.APISecret,
 		n.From,

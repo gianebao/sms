@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gianebao/sms"
+	"github.com/darylnwk/sms"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -58,7 +58,9 @@ func TestNexmo_Send(t *testing.T) {
 		sms.Message{
 			Template: "Hello %s",
 			Tokens:   []interface{}{"world"},
-		})
+		},
+		"",
+	)
 
 	nResponse := response.(sms.NexmoResponse)
 

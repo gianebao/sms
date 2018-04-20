@@ -58,7 +58,9 @@ func TestNexmo_Send(t *testing.T) {
 		sms.Message{
 			Template: "Hello %s",
 			Tokens:   []interface{}{"world"},
-		})
+		},
+		"",
+	)
 
 	nResponse := response.(sms.NexmoResponse)
 

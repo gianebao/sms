@@ -15,6 +15,7 @@ type Nexmo struct {
 	From      string
 	to        string
 	text      string
+	callback  string
 }
 
 // NexmoResponse represents a Nexmo response payload in JSON
@@ -78,10 +79,11 @@ func (n Nexmo) getResponse() (NexmoResponse, error) {
 }
 
 // send sends the API request to Nexmo server with the `to` and `message` parameters
-func (n Nexmo) send(to string, message Message) (interface{}, error) {
+func (n Nexmo) send(to string, message Message, callback string) (interface{}, error) {
 
 	n.to = to
 	n.text = message.String()
+	n.callback = callback
 
 	return n.getResponse()
 }
@@ -108,6 +110,10 @@ func (n Nexmo) getQuery() string {
 
 	if "" != n.text {
 		u.Set("text", n.text)
+	}
+
+	if "" != n.callback {
+		u.Set("callback", n.callback)
 	}
 
 	return u.Encode()
